@@ -38,7 +38,7 @@ class PlayerController extends Controller
     {
         $request->validate([
             'name'    => 'required',
-            'number'  => 'required|integer',
+            'number'  => 'required',
             'team_id' => 'required|exists:teams,id',
         ]);
 

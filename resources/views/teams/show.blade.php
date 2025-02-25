@@ -15,7 +15,7 @@
                     <input type="hidden" name="team_id" value="{{ $team->id }}">
                     <input type="text" name="name" class="form-control mb-2" placeholder="Nombre del jugador"
                         required>
-                    <input type="number" name="number" class="form-control mb-2" placeholder="Número del jugador"
+                    <input type="text" name="number" class="form-control mb-2" placeholder="Número del jugador"
                         required>
                     <button type="submit" class="btn btn-primary">Agregar Jugador</button>
                 </form>
@@ -447,19 +447,19 @@
                         e.dataTransfer.setData("name", li.dataset.name);
                     });
 
-                    li.querySelector('#trash').addEventListener("click", function(e) {
-                        e.preventDefault();
-                        let playerId = e.target.parentNode.getAttribute("data-id");
-                        console.log("Eliminar jugador, ID:", playerId);
-                        deletePlayer(playerId);
-                    })
-
                     document.getElementById('player-list').appendChild(li);
                     el.remove();
                     savePositions(pId);
                     console.log("Jugador devuelto a la lista");
                 });
             });
+
+            document.querySelectorAll('#trash').forEach(el => el.addEventListener("click", function(e) {
+                e.preventDefault();
+                let playerId = e.target.parentNode.getAttribute("data-id");
+                console.log("Eliminar jugador, ID:", playerId);
+                deletePlayer(playerId);
+            }));
 
             // Configurar la papelera como zona de drop para eliminar jugadores
             trash.addEventListener("dragover", function(e) {
