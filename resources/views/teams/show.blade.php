@@ -8,26 +8,41 @@
         <div class="row">
             <!-- Jugadores Disponibles -->
             <div class="col-md-3">
-                <h4>Jugadores Disponibles</h4>
+
                 <!-- Form para agregar jugadores -->
                 <form method="POST" action="{{ route('players.store') }}" class="mb-3">
                     @csrf
                     <input type="hidden" name="team_id" value="{{ $team->id }}">
-                    <input type="text" name="name" class="form-control mb-2" placeholder="Nombre del jugador" required>
-                    <input type="number" name="number" class="form-control mb-2" placeholder="Número del jugador" required>
+                    <input type="text" name="name" class="form-control mb-2" placeholder="Nombre del jugador"
+                        required>
+                    <input type="number" name="number" class="form-control mb-2" placeholder="Número del jugador"
+                        required>
                     <button type="submit" class="btn btn-primary">Agregar Jugador</button>
                 </form>
 
                 <!-- Lista de jugadores sin posición (disponibles) -->
                 <ul class="list-group" id="player-list">
+                    <h4 class="text-center w-100"> <strong>Jugadores disponibles</strong></h4>
                     @foreach ($team->players as $player)
                         @if (is_null($player->position_x) || is_null($player->position_y))
-                            <li class="list-group-item player"
-                                draggable="true"
-                                data-id="{{ $player->id }}"
-                                data-name="{{ $player->name }}"
-                                data-number="{{ $player->number }}">
-                                <strong>#{{ $player->number }}</strong> - {{ $player->name }}
+                            <li class="list-group-item player" draggable="true" data-id="{{ $player->id }}"
+                                data-name="{{ $player->name }}" data-number="{{ $player->number }}">
+
+                                <strong>{{ $player->number }}</strong> - {{ $player->name }}
+
+                                <!-- Icono para eliminar jugador de la lista -->
+
+                                <svg id="trash" data-id="{{ $player->id }}" xmlns="http://www.w3.org/2000/svg"
+                                    width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                                    <path d="M10 11v6"></path>
+                                    <path d="M14 11v6"></path>
+                                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                                </svg>
+
                             </li>
                         @endif
                     @endforeach
@@ -36,16 +51,31 @@
 
             <!-- Cancha y Papelera -->
             <div class="col-md-9 d-flex flex-column align-items-center">
-                <h4 class="text-center w-100">Cancha</h4>
+                <h4 class="text-center w-100">Alineación</h4>
+
+
+                <!-- <select class="form-select form-select-lg mb-3" aria-label=".form-select-lg example">
+                    {{-- @foreach ($alineacion->alineaciones as $alineacion)
+                        @if ($alineacion->team_id == $team->id)
+                            <option value="{{ $alineacion->formation }}">{{ $alineacion->formation }}</option>
+                        @elseif ($alineacion->default == 1)
+                            <option selected value="{{ $alineacion->formation }}">{{ $alineacion->formation }}
+                            </option>
+                        @endif
+                    @endforeach --}}
+                    <option selected>Open this select menu</option>
+                    <option value="1">One</option>
+                    <option value="2">Two</option>
+                    <option value="3">Three</option>
+                </select> -->
+
                 <div id="field" class="football-box">
                     @foreach ($team->players as $player)
                         @if (!is_null($player->position_x) && !is_null($player->position_y))
-                            <div class="player-icon"
-                                data-id="{{ $player->id }}"
-                                data-player-number="{{ $player->number }}"
-                                data-player-name="{{ $player->name }}"
+                            <div class="player-icon" data-id="{{ $player->id }}"
+                                data-player-number="{{ $player->number }}" data-player-name="{{ $player->name }}"
                                 style="left: {{ $player->position_x }}px; top: {{ $player->position_y }}px;">
-                                
+
                                 <!-- Estructura de "cabeza y cuerpo" -->
                                 <div class="player-figure">
                                     <div class="player-head"></div>
@@ -63,15 +93,15 @@
                 </div>
 
                 <!-- Papelera: Zona de eliminación de jugadores -->
-                <div id="trash" class="trash-bin">
-                    <img src="https://img.icons8.com/fluency/48/000000/trash.png" alt="Papelera"/>
+                {{-- <div id="trash" class="trash-bin">
+                    <img src="https://img.icons8.com/fluency/48/000000/trash.png" alt="Papelera" />
                     <div class="trash-label">Papelera</div>
-                </div>
+                </div> --}}
 
                 <!-- Botón para guardar posiciones en lote -->
-                <button id="save-positions" class="btn btn-success mt-3">
+                {{-- <button id="save-positions" class="btn btn-success mt-3">
                     Guardar Posiciones
-                </button>
+                </button> --}}
             </div>
         </div>
     </div>
@@ -84,16 +114,30 @@
             background: url('https://i.pinimg.com/550x/02/f0/a0/02f0a04d141f9159906da402d942ec83.jpg') no-repeat center center;
             background-size: cover;
             border-radius: 20px;
-            border: 5px solid white; /* Borde blanco */
+            border: 5px solid white;
+            /* Borde blanco */
             position: relative;
             overflow: hidden;
+        }
+
+        .player {
+            cursor: move;
+            display: flex
+        }
+
+        .player svg {
+            position: absolute;
+            cursor: pointer;
+            right: 0;
         }
 
         /* Contenedor principal de cada jugador en la cancha */
         .player-icon {
             position: absolute;
-            cursor: move; /* Indicador de movimiento */
-            user-select: none; /* Evita la selección de texto al arrastrar */
+            cursor: move;
+            /* Indicador de movimiento */
+            user-select: none;
+            /* Evita la selección de texto al arrastrar */
             text-align: center;
         }
 
@@ -107,7 +151,7 @@
         /* .player-head {
             width: 40px;
             height: 40px;
-            background-color: #000; 
+            background-color: #000;
             border-radius: 50%;
             margin-bottom: 5px;
         } */
@@ -115,7 +159,8 @@
         .player-body {
             width: 50px;
             height: 50px;
-            background-color: #171ace; /* Negro */
+            background-color: #171ace;
+            /* Negro */
             border-radius: 30px;
             display: flex;
             align-items: center;
@@ -123,7 +168,8 @@
         }
 
         .player-number {
-            color: #fff; /* Blanco */
+            color: #fff;
+            /* Blanco */
             font-size: 24px;
             font-weight: bold;
         }
@@ -131,31 +177,26 @@
         .player-name {
             margin-top: 5px;
             font-weight: bold;
-            color: #fff; /* Texto oscuro */
+            color: #fff;
+            /* Texto oscuro */
         }
 
         /* Estilos para la papelera */
-        .trash-bin {
-            width: 80px;
-            height: 80px;
-            border: 2px dashed #ccc;
-            border-radius: 10px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            margin-top: 20px;
-        }
-        .trash-label {
+        /* .trash-bin {
+            width: 24px;
+            height: 24px;
+        } */
+
+        /* .trash-label {
             font-size: 0.8rem;
             color: #555;
             margin-top: 5px;
-        }
+        } */
     </style>
 
     <!-- Scripts -->
     <script>
-        document.addEventListener("DOMContentLoaded", function () {
+        document.addEventListener("DOMContentLoaded", function() {
             let field = document.getElementById("field");
             let trash = document.getElementById("trash");
 
@@ -185,6 +226,7 @@
                     function onMouseUp() {
                         document.removeEventListener("mousemove", onMouseMove);
                         document.removeEventListener("mouseup", onMouseUp);
+                        savePositions();
                     }
 
                     document.addEventListener("mousemove", onMouseMove);
@@ -192,6 +234,42 @@
                 });
             }
 
+            function deletePlayer(playerId) {
+                fetch(`/players/${playerId}`, {
+                        method: "DELETE",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        }
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Error HTTP: " + response.status);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            console.log("Jugador eliminado.");
+                        } else {
+                            alert("Error al eliminar jugador.");
+                        }
+                        // Remover el icono de la cancha si existe
+                        let icon = document.querySelector(`.player-icon[data-id="${playerId}"]`);
+                        if (icon) {
+                            icon.remove();
+                        }
+                        // Remover el jugador de la lista si existe
+                        let listItem = document.querySelector(`.player[data-id="${playerId}"]`);
+                        if (listItem) {
+                            listItem.remove();
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error al eliminar jugador:", error);
+                        alert("Error al eliminar jugador.");
+                    });
+            }
             // DRAG NATIVO para mover de la lista a la cancha
             document.querySelectorAll(".player").forEach(el => {
                 el.addEventListener("dragstart", function(e) {
@@ -200,6 +278,54 @@
                     e.dataTransfer.setData("name", el.dataset.name);
                 });
             });
+
+            function savePositions(del) {
+                let positions = [];
+                field.querySelectorAll(".player-icon").forEach(icon => {
+                    let id = icon.dataset.id;
+                    let left = parseInt(icon.style.left);
+                    let top = parseInt(icon.style.top);
+                    positions.push({
+                        id: id,
+                        x: left,
+                        y: top
+                    });
+                });
+
+                if (del) positions.push({
+                    id: del,
+                    x: null,
+                    y: null
+                });
+
+                fetch(`/api/players/positions`, {
+                        method: "PATCH",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({
+                            positions: positions
+                        })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Error HTTP: " + response.status);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            console.log("Posiciones guardadas correctamente.");
+                        } else {
+                            alert("Error al guardar posiciones.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error al guardar posiciones:", error);
+                        alert("Error al guardar posiciones. Revisa la consola.");
+                    });
+            }
 
             // Permitir drop en la cancha
             field.addEventListener("dragover", function(e) {
@@ -284,6 +410,7 @@
                 });
 
                 field.appendChild(newIcon);
+                savePositions();
             });
 
             // Hacer arrastrables los jugadores que ya están en la cancha
@@ -301,7 +428,18 @@
                     li.dataset.id = pId;
                     li.dataset.number = pNumber;
                     li.dataset.name = pName;
-                    li.innerHTML = `<strong>#${pNumber}</strong> - ${pName}`;
+                    li.innerHTML = `<strong>${pNumber}</strong> - ${pName}
+
+                                <svg id="trash" data-id="${pId}" xmlns="http://www.w3.org/2000/svg"
+                                    width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="red"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+
+                                    <polyline points="3 6 5 6 21 6"></polyline>
+                                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                                    <path d="M10 11v6"></path>
+                                    <path d="M14 11v6"></path>
+                                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                                </svg>`;
 
                     li.addEventListener("dragstart", function(e) {
                         e.dataTransfer.setData("player-id", li.dataset.id);
@@ -309,8 +447,17 @@
                         e.dataTransfer.setData("name", li.dataset.name);
                     });
 
+                    li.querySelector('#trash').addEventListener("click", function(e) {
+                        e.preventDefault();
+                        let playerId = e.target.parentNode.getAttribute("data-id");
+                        console.log("Eliminar jugador, ID:", playerId);
+                        deletePlayer(playerId);
+                    })
+
                     document.getElementById('player-list').appendChild(li);
                     el.remove();
+                    savePositions(pId);
+                    console.log("Jugador devuelto a la lista");
                 });
             });
 
@@ -319,46 +466,14 @@
                 e.preventDefault();
             });
 
-            trash.addEventListener("drop", function(e) {
+            trash.addEventListener("click", function(e) {
                 e.preventDefault();
-                let playerId = e.dataTransfer.getData("player-id");
+                let playerId = e.target.parentNode.getAttribute("data-id");
+                // let playerId = e.dataTransfer.getData("player-id");
                 console.log("Eliminar jugador, ID:", playerId);
 
-                // Petición DELETE al servidor (asegúrate de tener la ruta definida en web.php)
-                fetch(`/players/${playerId}`, {
-                    method: "DELETE",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                    }
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Error HTTP: " + response.status);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        alert("Jugador eliminado.");
-                    } else {
-                        alert("Error al eliminar jugador.");
-                    }
-                    // Remover el icono de la cancha si existe
-                    let icon = document.querySelector(`.player-icon[data-id="${playerId}"]`);
-                    if (icon) {
-                        icon.remove();
-                    }
-                    // Remover el jugador de la lista si existe
-                    let listItem = document.querySelector(`.player[data-id="${playerId}"]`);
-                    if (listItem) {
-                        listItem.remove();
-                    }
-                })
-                .catch(error => {
-                    console.error("Error al eliminar jugador:", error);
-                    alert("Error al eliminar jugador.");
-                });
+                // Petición DELETE al servidor (asegúrate de tener la ruta definida en web.php) 
+                deletePlayer(playerId);
             });
 
             // Botón para guardar las posiciones en lote
@@ -368,34 +483,40 @@
                     let id = icon.dataset.id;
                     let left = parseInt(icon.style.left);
                     let top = parseInt(icon.style.top);
-                    positions.push({ id: id, x: left, y: top });
+                    positions.push({
+                        id: id,
+                        x: left,
+                        y: top
+                    });
                 });
 
                 fetch(`/players/positions`, {
-                    method: "PATCH",
-                    headers: {
-                        "Content-Type": "application/json",
-                        "X-CSRF-TOKEN": "{{ csrf_token() }}"
-                    },
-                    body: JSON.stringify({ positions: positions })
-                })
-                .then(response => {
-                    if (!response.ok) {
-                        throw new Error("Error HTTP: " + response.status);
-                    }
-                    return response.json();
-                })
-                .then(data => {
-                    if (data.success) {
-                        alert("Posiciones guardadas correctamente.");
-                    } else {
-                        alert("Error al guardar posiciones.");
-                    }
-                })
-                .catch(error => {
-                    console.error("Error al guardar posiciones:", error);
-                    alert("Error al guardar posiciones. Revisa la consola.");
-                });
+                        method: "PATCH",
+                        headers: {
+                            "Content-Type": "application/json",
+                            "X-CSRF-TOKEN": "{{ csrf_token() }}"
+                        },
+                        body: JSON.stringify({
+                            positions: positions
+                        })
+                    })
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error("Error HTTP: " + response.status);
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.success) {
+                            alert("Posiciones guardadas correctamente.");
+                        } else {
+                            alert("Error al guardar posiciones.");
+                        }
+                    })
+                    .catch(error => {
+                        console.error("Error al guardar posiciones:", error);
+                        alert("Error al guardar posiciones. Revisa la consola.");
+                    });
             });
         });
     </script>

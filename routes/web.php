@@ -17,8 +17,6 @@ Route::middleware(['auth'])->group(function () {
     Route::resource('users', UserController::class);
     Route::resource('teams', TeamController::class);
     Route::resource('players', PlayerController::class);
-
-    Route::patch('/players/positions', [PlayerController::class, 'updatePositions'])->name('players.updatePositions');
 });
 
 require __DIR__ . '/auth.php';
