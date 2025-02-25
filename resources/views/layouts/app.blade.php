@@ -5,7 +5,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <meta name="csrf-token" content="{{ csrf_token() }}">
 
-        <title>{{ config('app.name', 'Laravel') }}</title>
+        <title>{{ config('app.name', 'Sport') }}</title>
 
         <!-- Fonts -->
         <link rel="preconnect" href="https://fonts.bunny.net">
@@ -13,6 +13,8 @@
 
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js" defer></script>
+
+        <link rel="shortcut icon" href="https://static.vecteezy.com/system/resources/thumbnails/011/421/474/small_2x/soccer-ball-realistic-png.png" type="image/x-icon">
 
         <!-- Scripts -->
         @vite(['resources/css/app.css', 'resources/js/app.js'])
